@@ -1305,8 +1305,6 @@ local function FakeScript()
 	-- Ok wow that is the end of all the ui functionality crap.
 
 	function Execute()
-		getgenv().DebugMode = false -- Set this to true to see how many passes and fails at the end of each function and maybe more features in the future.
-
 		local debugMode = getgenv().DebugMode
 		local configs = script.Parent.configs
 

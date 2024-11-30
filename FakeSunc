@@ -29,6 +29,7 @@ Ui["3"]["BackgroundColor3"] = Color3.fromRGB(34, 34, 34);
 Ui["3"]["Size"] = UDim2.new(1, 0, 1, 0);
 Ui["3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 Ui["3"]["Name"] = [[Main]];
+Ui["3"]["Position"] = UDim2.new(0,0,1,0)
 
 
 -- FakeSUNC.Canvas.Main.Title
@@ -867,579 +868,575 @@ Ui["4a"]["Color"] = Color3.fromRGB(34, 34, 34);
 
 
 -- FakeSUNC.Canvas.Main.LocalScript
-Ui["4b"] = Instance.new("LocalScript", Ui["3"]);
+Ui["4b"] = Instance.new("Part", Ui["3"]);
+Ui["4b"]["Name"] = "FakeScript"
+local script = Ui["4b"];
+local functionsToTest = { -- List of functions to test! add more if u want
+	"Drawing.Fonts",
+	"Drawing.new",
+	"WebSocket.connect",
+	"appendfile",
+	"base64_decode",
+	"base64_encode",
+	"cache.invalidate",
+	"cache.iscached",
+	"cache.replace",
+	"checkcaller",
+	"cleardrawcache",
+	"clonefunction",
+	"cloneref",
+	"compareinstances",
+	"crypt.decrypt",
+	"crypt.encrypt",
+	"crypt.generatebytes",
+	"crypt.generatekey",
+	"crypt.hash",
+	"debug.getconstant",
+	"debug.getconstants",
+	"debug.getinfo",
+	"debug.getproto",
+	"debug.getprotos",
+	"debug.getstack",
+	"debug.getupvalue",
+	"debug.getupvalues",
+	"debug.setconstant",
+	"debug.setstack",
+	"debug.setupvalue",
+	"decompile",
+	"delfile",
+	"delfolder",
+	"fireclickdetector",
+	"fireproximityprompt",
+	"firesignal",
+	"firetouchinterest",
+	"getcallbackvalue",
+	"getcallingscript",
+	"getconnections",
+	"getcustomasset",
+	"getgc",
+	"getgenv_access",
+	"gethiddenproperty",
+	"gethui",
+	"getinstances",
+	"getloadedmodules",
+	"getnamecallmethod",
+	"getnilinstances",
+	"getrawmetatable",
+	"getrenderproperty",
+	"getrenv",
+	"getrunningscripts",
+	"getscriptbytecode",
+	"getscriptclosure",
+	"getscripthash",
+	"getscripts",
+	"getsenv",
+	"getthreadidentity",
+	"hookfunction",
+	"hookmetamethod",
+	"identifyexecutor",
+	"iscclosure",
+	"isexecutorclosure",
+	"isfile",
+	"isfolder",
+	"islclosure",
+	"isrbxactive",
+	"isreadonly",
+	"isrenderobj",
+	"isscriptable",
+	"listfiles",
+	"loadfile",
+	"loadstring",
+	"lz4compress",
+	"lz4decompress",
+	"makefolder",
+	"newcclosure",
+	"readfile",
+	"request",
+	"sethiddenproperty",
+	"setrawmetatable",
+	"setreadonly",
+	"setrenderproperty",
+	"setscriptable",
+	"setthreadidentity",
+	"writefile"
+}
+
+local failed_tests = {}
+local succeeded_tests = {}
+
+-- big bunch of ui crap coming up
+
+local tweenService = game:GetService("TweenService")
+local uis = game:GetService("UserInputService")
+local closeButton = script.Parent.Close
+
+local closeTweenInfo = TweenInfo.new(
+	1.5,
+	Enum.EasingStyle.Quint,
+	Enum.EasingDirection.Out,
+	0,
+	false,
+	0.1
+
+)
+local closeProp = {
+	["Position"] = UDim2.new(0, 0, -1, 0)
+}
+
+local closeTween = tweenService:Create(script.Parent, closeTweenInfo, closeProp)
+
+local openTweenInfo = TweenInfo.new(
+	1.5,
+	Enum.EasingStyle.Quint,
+	Enum.EasingDirection.Out,
+	0,
+	false,
+	0.1
+
+)
+local openProp = {
+	["Position"] = UDim2.new(0, 0, 0, 0)
+}
+
+local openTween = tweenService:Create(script.Parent, openTweenInfo, openProp)
+
+closeButton.Activated:Connect(function()
+	closeTween:Play()
+	wait(0.75)
+	closeTween.Changed:Wait()
+	if closeTween.PlaybackState == Enum.PlaybackState.Completed then
+		script.Parent.Parent.Parent:Destroy()
+	end
+end)
 
 
-
--- FakeSUNC.Canvas.Main.LocalScript
-local function FakeScript()
-	local script = Ui["4b"];
-	local functionsToTest = { -- List of functions to test! add more if u want
-		"Drawing.Fonts",
-		"Drawing.new",
-		"WebSocket.connect",
-		"appendfile",
-		"base64_decode",
-		"base64_encode",
-		"cache.invalidate",
-		"cache.iscached",
-		"cache.replace",
-		"checkcaller",
-		"cleardrawcache",
-		"clonefunction",
-		"cloneref",
-		"compareinstances",
-		"crypt.decrypt",
-		"crypt.encrypt",
-		"crypt.generatebytes",
-		"crypt.generatekey",
-		"crypt.hash",
-		"debug.getconstant",
-		"debug.getconstants",
-		"debug.getinfo",
-		"debug.getproto",
-		"debug.getprotos",
-		"debug.getstack",
-		"debug.getupvalue",
-		"debug.getupvalues",
-		"debug.setconstant",
-		"debug.setstack",
-		"debug.setupvalue",
-		"decompile",
-		"delfile",
-		"delfolder",
-		"fireclickdetector",
-		"fireproximityprompt",
-		"firesignal",
-		"firetouchinterest",
-		"getcallbackvalue",
-		"getcallingscript",
-		"getconnections",
-		"getcustomasset",
-		"getgc",
-		"getgenv_access",
-		"gethiddenproperty",
-		"gethui",
-		"getinstances",
-		"getloadedmodules",
-		"getnamecallmethod",
-		"getnilinstances",
-		"getrawmetatable",
-		"getrenderproperty",
-		"getrenv",
-		"getrunningscripts",
-		"getscriptbytecode",
-		"getscriptclosure",
-		"getscripthash",
-		"getscripts",
-		"getsenv",
-		"getthreadidentity",
-		"hookfunction",
-		"hookmetamethod",
-		"identifyexecutor",
-		"iscclosure",
-		"isexecutorclosure",
-		"isfile",
-		"isfolder",
-		"islclosure",
-		"isrbxactive",
-		"isreadonly",
-		"isrenderobj",
-		"isscriptable",
-		"listfiles",
-		"loadfile",
-		"loadstring",
-		"lz4compress",
-		"lz4decompress",
-		"makefolder",
-		"newcclosure",
-		"readfile",
-		"request",
-		"sethiddenproperty",
-		"setrawmetatable",
-		"setreadonly",
-		"setrenderproperty",
-		"setscriptable",
-		"setthreadidentity",
-		"writefile"
-	}
-
-	local failed_tests = {}
-	local succeeded_tests = {}
-
-	-- big bunch of ui crap coming up
-
-	local tweenService = game:GetService("TweenService")
-	local uis = game:GetService("UserInputService")
-	local closeButton = script.Parent.Close
-
-	local closeTweenInfo = TweenInfo.new(
-		1.5,
-		Enum.EasingStyle.Quint,
-		Enum.EasingDirection.Out,
-		0,
-		false,
-		0.1
-
-	)
-	local closeProp = {
-		["Position"] = UDim2.new(0, 0, -1, 0)
-	}
-
-	local closeTween = tweenService:Create(script.Parent, closeTweenInfo, closeProp)
-
-	local openTweenInfo = TweenInfo.new(
-		1.5,
-		Enum.EasingStyle.Quint,
-		Enum.EasingDirection.Out,
-		0,
-		false,
-		0.1
-
-	)
-	local openProp = {
-		["Position"] = UDim2.new(0, 0, 0, 0)
-	}
-
-	local openTween = tweenService:Create(script.Parent, openTweenInfo, openProp)
-
-	closeButton.Activated:Connect(function()
-		closeTween:Play()
-		wait(0.75)
-		closeTween.Changed:Wait()
-		if closeTween.PlaybackState == Enum.PlaybackState.Completed then
-			script.Parent.Parent.Parent:Destroy()
+uis.InputBegan:Connect(function(input, gameprocessed)
+	if not gameprocessed then
+		if input.KeyCode == Enum.KeyCode.K then
+			if script.Parent.Position == UDim2.new(0, 0, -1, 0) then
+				openTween:Play();
+			else
+				closeTween:Play();
+			end;
+		elseif input.KeyCode == Enum.KeyCode.Q then
+			Execute()
 		end
-	end)
+	end
+end)
 
-
-	uis.InputBegan:Connect(function(input, gameprocessed)
-		if not gameprocessed then
-			if input.KeyCode == Enum.KeyCode.K then
-				if script.Parent.Position == UDim2.new(0, 0, -1, 0) then
-					openTween:Play();
-				else
-					closeTween:Play();
-				end;
-			elseif input.KeyCode == Enum.KeyCode.Q then
-				Execute()
+local function refreshLists(select)
+	if select == nil then select = false end
+	for i,v in script.Parent.scrollingFrames:GetDescendants() do
+		if v:IsA("Frame") then
+			v:Destroy()
+		end
+	end
+	for i,v in pairs(functionsToTest) do
+		if table.find(failed_tests, v) then
+			if v == selected_test and select == true then
+				newFunction(v, false, "failed") 
+				newFunction(v, false, "total", true)
+			else
+				newFunction(v, false, "failed") 
+				newFunction(v, false, "total")
 			end
-		end
-	end)
-
-	local function refreshLists(select)
-		if select == nil then select = false end
-		for i,v in script.Parent.scrollingFrames:GetDescendants() do
-			if v:IsA("Frame") then
-				v:Destroy()
+		elseif table.find(succeeded_tests, v) then
+			if v == selected_test and select == true then
+				newFunction(v, true, "passed") 
+				newFunction(v, true, "total", true)
+			else
+				newFunction(v, true, "passed") 
+				newFunction(v, true, "total")
 			end
-		end
-		for i,v in pairs(functionsToTest) do
-			if table.find(failed_tests, v) then
-				if v == selected_test and select == true then
-					newFunction(v, false, "failed") 
-					newFunction(v, false, "total", true)
-				else
-					newFunction(v, false, "failed") 
-					newFunction(v, false, "total")
-				end
-			elseif table.find(succeeded_tests, v) then
-				if v == selected_test and select == true then
-					newFunction(v, true, "passed") 
-					newFunction(v, true, "total", true)
-				else
-					newFunction(v, true, "passed") 
-					newFunction(v, true, "total")
-				end
-			elseif table.find(functionsToTest, v) then
-				if v == selected_test and select == true then
-					newFunction(v, true, "total", true)
-				else
-					newFunction(v, true, "total")
-				end
+		elseif table.find(functionsToTest, v) then
+			if v == selected_test and select == true then
+				newFunction(v, true, "total", true)
+			else
+				newFunction(v, true, "total")
 			end
 		end
 	end
+end
 
-	local function tableFunctions(func, item, name, ogName, direction, list)
-		if func == "rename" then
-			local index = table.find(succeeded_tests, ogName)
-			if index then succeeded_tests[index] = name end
-			local index2 = table.find(failed_tests, ogName)
-			if index2 then failed_tests[index2] = name end
-			functionsToTest[item] = name
-		elseif func == "add" then
-			local listObj = list == "total" and script.Parent.scrollingFrames.Total or list == "passed" and script.Parent.scrollingFrames.Passed or list == "failed" and script.Parent.scrollingFrames.Failed
-			local listFrame = listObj[list.."Frame"]
-			local listTable = list == "passed" and succeeded_tests or list == "failed" and failed_tests or list == nil and succeeded_tests or list == "total" and succeeded_tests
-			table.insert(functionsToTest, name)
-			table.insert(listTable, name)
-			refreshLists()
-			updateText()
-			listFrame.CanvasPosition = Vector2.new(0, 99999999)
-		elseif func == "remove" then
-			local index = table.find(functionsToTest, name)
-			if index then table.remove(functionsToTest, index) end
-			local index2 = table.find(failed_tests, name)
-			if index2 then table.remove(failed_tests, index2) end
-			local index3 = table.find(succeeded_tests, name)
-			if index3 then table.remove(succeeded_tests, index3) end
-			selected_list = ""
-			selected_test = ""
-			selected = false
-			refreshLists()
-			updateText()
-		elseif func == "move" then
-			local index = table.find(functionsToTest, selected_test)
-			if index then
-				local newIndex = direction == "down" and index + 1 or direction == "up" and index - 1
-				if newIndex > #functionsToTest or newIndex < 1 then return end
-				table.remove(functionsToTest, index)
-				table.insert(functionsToTest, newIndex, selected_test)
-				selected_test = name
-				refreshLists(true)
-				updateText()
-			end
-		end
-	end
-
-	local buttons = {
-		["Total"] = script.Parent.scrollingFrames.Total.BottomBar.buttons,
-		["Failed"] = script.Parent.scrollingFrames.Failed.BottomBar.buttons,
-		["Passed"] = script.Parent.scrollingFrames.Passed.BottomBar.buttons
-	}
-
-	for _, button in buttons.Total:GetChildren() do
-		if button:IsA("ImageButton") then
-			button.Activated:Connect(function()
-				if selected_test == "" then 
-					if button.Name == "New" then
-						tableFunctions("add", nil, "", nil, nil, "total")
-					end
-				else
-					if button.Name == "Delete" then
-						if selected_list == "total" then
-							tableFunctions("remove", nil, selected_test, nil, nil, nil)
-						end
-					elseif button.Name == "Up" then
-						if selected_list == "total" then
-							tableFunctions("move", nil, selected_test, nil, "up", nil)
-						end
-					elseif button.Name == "Down" then
-						if selected_list == "total" then
-							tableFunctions("move", nil, selected_test, nil, "down", nil)
-						end
-					elseif button.Name == "New" then	
-						tableFunctions("add", nil, "", nil, nil, "total")
-					end
-				end
-			end)
-		end
-	end
-
-	selected = false
-	selected_test, selected_list = "", ""
-	local count = 0
-	function newFunction(name, value, list, select)
-		if name == nil then name = "" end
-		if value == nil then value = true end
-		if list == nil then list = "total" end
-		if select == nil then select = selected end
-
-		if select == true then selected_test = name selected_list = list end
-
+local function tableFunctions(func, item, name, ogName, direction, list)
+	if func == "rename" then
+		local index = table.find(succeeded_tests, ogName)
+		if index then succeeded_tests[index] = name end
+		local index2 = table.find(failed_tests, ogName)
+		if index2 then failed_tests[index2] = name end
+		functionsToTest[item] = name
+	elseif func == "add" then
 		local listObj = list == "total" and script.Parent.scrollingFrames.Total or list == "passed" and script.Parent.scrollingFrames.Passed or list == "failed" and script.Parent.scrollingFrames.Failed
 		local listFrame = listObj[list.."Frame"]
-
-		local functionBox = Instance.new("Frame")
-		functionBox.Name = "functionBox"
-		functionBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		functionBox.Size = UDim2.new(0.95, 0, 0.135, 0)
-		functionBox.BorderSizePixel = 0
-		functionBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-		functionBox.Parent = listFrame
-
-		local UICorner = Instance.new("UICorner")
-		UICorner.CornerRadius = UDim.new(0.2, 0)
-		UICorner.Parent = functionBox
-
-		local toggle = Instance.new("TextButton")
-		toggle.TextWrapped = true
-		toggle.TextColor3 = Color3.fromRGB(0, 0, 0)
-		toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		toggle.Text = value and "✅" or "❌"
-		toggle.BorderSizePixel = 0
-		toggle.Size = UDim2.new(0.094, 0, 0.683, 0)
-		toggle.TextSize = 14
-		toggle.Name = "toggle"
-		toggle.Position = UDim2.new(0.025, 0, 0.146, 0)
-		toggle.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-		toggle.TextScaled = true
-		toggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-		toggle.Parent = functionBox
-
-		local UIStroke_2 = Instance.new("UIStroke")
-		UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		UIStroke_2.Color = Color3.fromRGB(33, 33, 33)
-		UIStroke_2.Thickness = 3
-		UIStroke_2.Parent = toggle
-
-		local TextBox = Instance.new("TextBox")
-		TextBox.TextWrapped = true
-		TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-		TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TextBox.Text = name
-		TextBox.TextSize = 14
-		TextBox.Size = list ~= "total" and UDim2.new(0.833, 0, 0.708, 0) or list == "total" and UDim2.new(0.737, 0, 0.708, 0) 
-		TextBox.Position = UDim2.new(0.144, 0, 0.124, 0)
-		TextBox.BorderSizePixel = 0
-		TextBox.TextXAlignment = Enum.TextXAlignment.Left
-		TextBox.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
-		TextBox.PlaceholderText = "Function name here!"
-		TextBox.TextScaled = true
-		TextBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-		TextBox.Parent = functionBox
-
-		local UICorner_1 = Instance.new("UICorner")
-		UICorner_1.Parent = TextBox
-
-		local checkbox
-		if list == "total" then
-			checkbox = Instance.new("TextButton")
-			checkbox.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-			checkbox.TextColor3 = Color3.fromRGB(0, 0, 0)
-			checkbox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			checkbox.Text = ""
-			checkbox.Name = "checkbox"
-			checkbox.Position = UDim2.new(0.9, 0, 0.25, 0)
-			checkbox.Size = UDim2.new(0.071, 0, 0.506, 0)
-			checkbox.BorderSizePixel = 0
-			checkbox.TextSize = 14
-			checkbox.BackgroundColor3 = Color3.fromRGB(76, 76, 76)
-			checkbox.Parent = functionBox
-
-			local UICorner_2 = Instance.new("UICorner")
-			UICorner_2.CornerRadius = UDim.new(1, 0)
-			UICorner_2.Parent = checkbox
-
-			local UIStroke_3 = Instance.new("UIStroke")
-			UIStroke_3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-			UIStroke_3.Color = Color3.fromRGB(76, 76, 76)
-			UIStroke_3.Thickness = 4
-			UIStroke_3.Parent = checkbox
-		end
-
-		toggle.Activated:Connect(function()
-			if value == true then value = false elseif value == false then value = true end
-			toggle.Text = value and "✅" or "❌"
-			local index = table.find(succeeded_tests, TextBox.Text)
-			local index2 = table.find(failed_tests, TextBox.Text)
-
-			if index then table.remove(succeeded_tests, index) else table.insert(succeeded_tests, TextBox.Text) end
-			if index2 then table.remove(failed_tests, index2) else table.insert(failed_tests, TextBox.Text) end
-			task.wait()
+		local listTable = list == "passed" and succeeded_tests or list == "failed" and failed_tests or list == nil and succeeded_tests or list == "total" and succeeded_tests
+		table.insert(functionsToTest, name)
+		table.insert(listTable, name)
+		refreshLists()
+		updateText()
+		listFrame.CanvasPosition = Vector2.new(0, 99999999)
+	elseif func == "remove" then
+		local index = table.find(functionsToTest, name)
+		if index then table.remove(functionsToTest, index) end
+		local index2 = table.find(failed_tests, name)
+		if index2 then table.remove(failed_tests, index2) end
+		local index3 = table.find(succeeded_tests, name)
+		if index3 then table.remove(succeeded_tests, index3) end
+		selected_list = ""
+		selected_test = ""
+		selected = false
+		refreshLists()
+		updateText()
+	elseif func == "move" then
+		local index = table.find(functionsToTest, selected_test)
+		if index then
+			local newIndex = direction == "down" and index + 1 or direction == "up" and index - 1
+			if newIndex > #functionsToTest or newIndex < 1 then return end
+			table.remove(functionsToTest, index)
+			table.insert(functionsToTest, newIndex, selected_test)
+			selected_test = name
+			refreshLists(true)
 			updateText()
-			refreshLists()
-		end)
-		TextBox.FocusLost:Connect(function()
-			local text = TextBox.Text
-			if table.find(functionsToTest, TextBox.Text) then 
-				if TextBox.Text ~= "" then
-					count += 1
-					text = text.."_"..count
+		end
+	end
+end
+
+local buttons = {
+	["Total"] = script.Parent.scrollingFrames.Total.BottomBar.buttons,
+	["Failed"] = script.Parent.scrollingFrames.Failed.BottomBar.buttons,
+	["Passed"] = script.Parent.scrollingFrames.Passed.BottomBar.buttons
+}
+
+for _, button in buttons.Total:GetChildren() do
+	if button:IsA("ImageButton") then
+		button.Activated:Connect(function()
+			if selected_test == "" then 
+				if button.Name == "New" then
+					tableFunctions("add", nil, "", nil, nil, "total")
+				end
+			else
+				if button.Name == "Delete" then
+					if selected_list == "total" then
+						tableFunctions("remove", nil, selected_test, nil, nil, nil)
+					end
+				elseif button.Name == "Up" then
+					if selected_list == "total" then
+						tableFunctions("move", nil, selected_test, nil, "up", nil)
+					end
+				elseif button.Name == "Down" then
+					if selected_list == "total" then
+						tableFunctions("move", nil, selected_test, nil, "down", nil)
+					end
+				elseif button.Name == "New" then	
+					tableFunctions("add", nil, "", nil, nil, "total")
 				end
 			end
-			local index = table.find(functionsToTest, name)
-			if index then tableFunctions("rename", index, text, name) end
-			updateText()
-			selected_test = ""
-			selected_list = ""
-			selected = false
-			refreshLists()
 		end)
+	end
+end
 
-		if list == "total" then
-			checkbox.Activated:Connect(function()
-				if select then 
-					if selected_test ~= TextBox.Text then
-						return
-					end
-					if selected_list ~= list then
-						return
-					end
-					select = not select
-					selected_test = ""
-					selected_list = ""
-					checkbox.BackgroundColor3 = select and Color3.fromRGB(255,255,255) or Color3.fromRGB(76,76,76)
-				elseif not select then
-					if selected_test == "" and selected_list == "" then
-						select = not select
-						selected_test = TextBox.Text
-						selected_list = list
-						checkbox.BackgroundColor3 = select and Color3.fromRGB(255,255,255) or Color3.fromRGB(76,76,76)
-					end
-				end
-			end)
+selected = false
+selected_test, selected_list = "", ""
+local count = 0
+function newFunction(name, value, list, select)
+	if name == nil then name = "" end
+	if value == nil then value = true end
+	if list == nil then list = "total" end
+	if select == nil then select = selected end
 
-			checkbox.BackgroundColor3 = select and Color3.fromRGB(255,255,255) or Color3.fromRGB(76,76,76)
+	if select == true then selected_test = name selected_list = list end
+
+	local listObj = list == "total" and script.Parent.scrollingFrames.Total or list == "passed" and script.Parent.scrollingFrames.Passed or list == "failed" and script.Parent.scrollingFrames.Failed
+	local listFrame = listObj[list.."Frame"]
+
+	local functionBox = Instance.new("Frame")
+	functionBox.Name = "functionBox"
+	functionBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	functionBox.Size = UDim2.new(0.95, 0, 0.135, 0)
+	functionBox.BorderSizePixel = 0
+	functionBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	functionBox.Parent = listFrame
+
+	local UICorner = Instance.new("UICorner")
+	UICorner.CornerRadius = UDim.new(0.2, 0)
+	UICorner.Parent = functionBox
+
+	local toggle = Instance.new("TextButton")
+	toggle.TextWrapped = true
+	toggle.TextColor3 = Color3.fromRGB(0, 0, 0)
+	toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	toggle.Text = value and "✅" or "❌"
+	toggle.BorderSizePixel = 0
+	toggle.Size = UDim2.new(0.094, 0, 0.683, 0)
+	toggle.TextSize = 14
+	toggle.Name = "toggle"
+	toggle.Position = UDim2.new(0.025, 0, 0.146, 0)
+	toggle.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	toggle.TextScaled = true
+	toggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	toggle.Parent = functionBox
+
+	local UIStroke_2 = Instance.new("UIStroke")
+	UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	UIStroke_2.Color = Color3.fromRGB(33, 33, 33)
+	UIStroke_2.Thickness = 3
+	UIStroke_2.Parent = toggle
+
+	local TextBox = Instance.new("TextBox")
+	TextBox.TextWrapped = true
+	TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextBox.Text = name
+	TextBox.TextSize = 14
+	TextBox.Size = list ~= "total" and UDim2.new(0.833, 0, 0.708, 0) or list == "total" and UDim2.new(0.737, 0, 0.708, 0) 
+	TextBox.Position = UDim2.new(0.144, 0, 0.124, 0)
+	TextBox.BorderSizePixel = 0
+	TextBox.TextXAlignment = Enum.TextXAlignment.Left
+	TextBox.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+	TextBox.PlaceholderText = "Function name here!"
+	TextBox.TextScaled = true
+	TextBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	TextBox.Parent = functionBox
+
+	local UICorner_1 = Instance.new("UICorner")
+	UICorner_1.Parent = TextBox
+
+	local checkbox
+	if list == "total" then
+		checkbox = Instance.new("TextButton")
+		checkbox.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+		checkbox.TextColor3 = Color3.fromRGB(0, 0, 0)
+		checkbox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		checkbox.Text = ""
+		checkbox.Name = "checkbox"
+		checkbox.Position = UDim2.new(0.9, 0, 0.25, 0)
+		checkbox.Size = UDim2.new(0.071, 0, 0.506, 0)
+		checkbox.BorderSizePixel = 0
+		checkbox.TextSize = 14
+		checkbox.BackgroundColor3 = Color3.fromRGB(76, 76, 76)
+		checkbox.Parent = functionBox
+
+		local UICorner_2 = Instance.new("UICorner")
+		UICorner_2.CornerRadius = UDim.new(1, 0)
+		UICorner_2.Parent = checkbox
+
+		local UIStroke_3 = Instance.new("UIStroke")
+		UIStroke_3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		UIStroke_3.Color = Color3.fromRGB(76, 76, 76)
+		UIStroke_3.Thickness = 4
+		UIStroke_3.Parent = checkbox
+	end
+
+	toggle.Activated:Connect(function()
+		if value == true then value = false elseif value == false then value = true end
+		toggle.Text = value and "✅" or "❌"
+		local index = table.find(succeeded_tests, TextBox.Text)
+		local index2 = table.find(failed_tests, TextBox.Text)
+
+		if index then table.remove(succeeded_tests, index) else table.insert(succeeded_tests, TextBox.Text) end
+		if index2 then table.remove(failed_tests, index2) else table.insert(failed_tests, TextBox.Text) end
+		task.wait()
+		updateText()
+		refreshLists()
+	end)
+	TextBox.FocusLost:Connect(function()
+		local text = TextBox.Text
+		if table.find(functionsToTest, TextBox.Text) then 
+			if TextBox.Text ~= "" then
+				count += 1
+				text = text.."_"..count
+			end
 		end
-	end
-
-	function updateText()
-		script.Parent.scrollingFrames.Total.total.Text = "Total: "..#functionsToTest
-		script.Parent.scrollingFrames.Failed.failed.Text = "Failed: "..#failed_tests
-		script.Parent.scrollingFrames.Passed.passed.Text = "Passed: "..#succeeded_tests
-	end
-
-	for i,v in pairs(functionsToTest) do
-		table.insert(succeeded_tests, v)
-	end
-
-	script.Parent.ExecuteButton.Activated:Connect(function()
-		Execute()
+		local index = table.find(functionsToTest, name)
+		if index then tableFunctions("rename", index, text, name) end
+		updateText()
+		selected_test = ""
+		selected_list = ""
+		selected = false
+		refreshLists()
 	end)
 
-	refreshLists()
-	updateText()
-
-	-- Ok wow that is the end of all the ui functionality crap.
-
-	function Execute()
-		local debugMode = getgenv().DebugMode
-		local configs = script.Parent.configs
-
-		local cool = configs.coolMoji.TextBox.Text
-		local x = configs.failMoji.TextBox.Text
-		local tick = configs.passMoji.TextBox.Text
-		local exmark = configs.exMarkMoji.TextBox.Text
-		local smirk = configs.smirkMoji.TextBox.Text
-
-		local discord = configs.DiscText.TextBox.Text -- discord
-		local version = configs.Ver.TextBox.Text
-		local contributors = configs.Contribs.TextBox.Text
-
-		local good_tests = #succeeded_tests
-
-		local start_time = os.clock() -- start the count
-
-		local max_tests = #functionsToTest
-
-		local successText = configs.SucText.TextBox.Text.." "..tostring(math.round(good_tests / max_tests * 100)) .. "% success rate (" .. tostring(good_tests) .. " out of " .. tostring(max_tests) .. ")" -- success text, pretty cool
-
-
-		-- Don't change beyond this point unless you know how to code.
-		local randstring = ""
-
-		for i = 1, math.random(18,30) do -- epic random string generation
-			randstring = randstring..string.char(math.random(33, math.random(140,150)))
-		end
-
-		-- Let's get this started!
-
-		local function startText()
-			if debugMode then
-				print("Loading... [Debug mode activated.]") -- for the lies
-			else
-				print("Loading..")
-			end
-			task.wait(0.1)
-			print("Grabbing executor name...")
-			task.wait(0.05)
-			print("STARTING sUNC test. Join our Discord server if you want :) [" .. discord .. "]")
-			task.wait(math.random(2, 4)) -- random number
-		end
-
-		local function endText(a)
-			print(successText) -- prints the success rate text
-			print(x.." Total tests failed: "..#failed_tests) -- self explanatory
-			if debugMode then
-				print(smirk.." This test was made by skintalker, i spent an hour or probably longer coding this.")
-			else
-				print(smirk.." This test was made by senS (fuck all the inco pastes/unc fakers)")
-			end
-			print("Finished the test in " .. a .. " seconds") -- number with one decimal place
-			print("\n")
-			if debugMode then
-				print("sUNC, Debug Mode: True, VERSION " .. version .. " ".. randstring) -- gamer
-			else
-				print("sUNC, VERSION " .. version .. " ".. randstring) -- gamer
-			end
-			print("Contributors: "..contributors) -- contributions :D
-		end
-
-		local function loadstringTest() -- You should be able to read this.
-			print(exmark .. " Starting basic loadstring testing")
-			task.wait(0.03)
-			print(tick .. " Passed the basic loadstring test.")
-			task.wait(0.03)
-			print(exmark .. " Finished basic loadstring testing")
-			task.wait(0.03)
-			print(exmark .. "Starting simple loadstring URL testing...")
-			task.wait(0.03)
-			print(tick .. " Passed the simple loadstring URL test. Short obfuscated scripts can be executed.")
-			task.wait(0.03)
-			print(exmark .. " Finished simple loadstring testing")
-			task.wait(0.03)
-			print(exmark .. " Starting complicated loadstring URL testing...")
-			task.wait(3)
-			print(exmark .. " Finished complicated loadstring testing")
-			task.wait(0.03)
-			print("loadstring[complicated] true")
-			task.wait(0.03)
-			print("loadstring[simple] true")
-			task.wait(0.03)
-			print("loadstring[basic] true")
-			wait(1)
-			print("Interesting")
-			print("\n") -- new line
-		end
-
-		local count1 = 1
-		local count2 = 1
-
-		local function test(a)
-			local random = Random.new()
-			task.wait(math.round(random:NextNumber(0, 0.1)*100)/100) -- Random wait time.
-			if #failed_tests == max_tests then -- If 0% UNC then
-				print(x.." "..a)
-			else
-				if table.find(failed_tests, a) then -- if it finds a failed function then fail it.
-					if debugMode then
-						print(x.." "..a.." -- "..count1.." Fails")
-					else
-						print(x.." "..a) -- ❌ functionhere
-					end
-					count1 += 1
-				else
-					if debugMode then
-						print(tick.." "..a.." -- "..count2.." Passes")
-					else
-						print(tick.." "..a) -- ✅ functionhere
-					end 
-					count2 += 1
+	if list == "total" then
+		checkbox.Activated:Connect(function()
+			if select then 
+				if selected_test ~= TextBox.Text then
+					return
+				end
+				if selected_list ~= list then
+					return
+				end
+				select = not select
+				selected_test = ""
+				selected_list = ""
+				checkbox.BackgroundColor3 = select and Color3.fromRGB(255,255,255) or Color3.fromRGB(76,76,76)
+			elseif not select then
+				if selected_test == "" and selected_list == "" then
+					select = not select
+					selected_test = TextBox.Text
+					selected_list = list
+					checkbox.BackgroundColor3 = select and Color3.fromRGB(255,255,255) or Color3.fromRGB(76,76,76)
 				end
 			end
-		end
+		end)
 
-		local function functions()
-			loadstringTest() -- Does loadstring test
-			task.wait(0.05)
-			for i,v in pairs(functionsToTest) do
-				test(v) -- For every function there is, it tests it.
-			end
-			print("\n") -- new line
-		end
-
-		local function Init() 
-			startText() -- Runs start text
-			task.wait(2)
-			functions() -- Starts doing the functions
-			endText(math.floor((os.clock() - start_time)*10)/10) -- Shows the end text after functions
-		end
-
-		Init()
+		checkbox.BackgroundColor3 = select and Color3.fromRGB(255,255,255) or Color3.fromRGB(76,76,76)
 	end
-end;
-task.spawn(FakeScript);
+end
+
+function updateText()
+	script.Parent.scrollingFrames.Total.total.Text = "Total: "..#functionsToTest
+	script.Parent.scrollingFrames.Failed.failed.Text = "Failed: "..#failed_tests
+	script.Parent.scrollingFrames.Passed.passed.Text = "Passed: "..#succeeded_tests
+end
+
+for i,v in pairs(functionsToTest) do
+	table.insert(succeeded_tests, v)
+end
+
+script.Parent.ExecuteButton.Activated:Connect(function()
+	Execute()
+end)
+
+refreshLists()
+updateText()
+
+-- Ok wow that is the end of all the ui functionality crap.
+
+function Execute()
+	local debugMode = getgenv().DebugMode
+	local configs = script.Parent.configs
+
+	local cool = configs.coolMoji.TextBox.Text
+	local x = configs.failMoji.TextBox.Text
+	local tick = configs.passMoji.TextBox.Text
+	local exmark = configs.exMarkMoji.TextBox.Text
+	local smirk = configs.smirkMoji.TextBox.Text
+
+	local discord = configs.DiscText.TextBox.Text -- discord
+	local version = configs.Ver.TextBox.Text
+	local contributors = configs.Contribs.TextBox.Text
+
+	local good_tests = #succeeded_tests
+
+	local start_time = os.clock() -- start the count
+
+	local max_tests = #functionsToTest
+
+	local successText = configs.SucText.TextBox.Text.." "..tostring(math.round(good_tests / max_tests * 100)) .. "% success rate (" .. tostring(good_tests) .. " out of " .. tostring(max_tests) .. ")" -- success text, pretty cool
+
+
+	-- Don't change beyond this point unless you know how to code.
+	local randstring = ""
+
+	for i = 1, math.random(18,30) do -- epic random string generation
+		randstring = randstring..string.char(math.random(33, math.random(140,150)))
+	end
+
+	-- Let's get this started!
+
+	local function startText()
+		if debugMode then
+			print("Loading... [Debug mode activated.]") -- for the lies
+		else
+			print("Loading..")
+		end
+		task.wait(0.1)
+		print("Grabbing executor name...")
+		task.wait(0.05)
+		print("STARTING sUNC test. Join our Discord server if you want :) [" .. discord .. "]")
+		task.wait(math.random(2, 4)) -- random number
+	end
+
+	local function endText(a)
+		print(successText) -- prints the success rate text
+		print(x.." Total tests failed: "..#failed_tests) -- self explanatory
+		if debugMode then
+			print(smirk.." This test was made by skintalker, i spent an hour or probably longer coding this.")
+		else
+			print(smirk.." This test was made by senS (fuck all the inco pastes/unc fakers)")
+		end
+		print("Finished the test in " .. a .. " seconds") -- number with one decimal place
+		print("\n")
+		if debugMode then
+			print("sUNC, Debug Mode: True, VERSION " .. version .. " ".. randstring) -- gamer
+		else
+			print("sUNC, VERSION " .. version .. " ".. randstring) -- gamer
+		end
+		print("Contributors: "..contributors) -- contributions :D
+	end
+
+	local function loadstringTest() -- You should be able to read this.
+		print(exmark .. " Starting basic loadstring testing")
+		task.wait(0.03)
+		print(tick .. " Passed the basic loadstring test.")
+		task.wait(0.03)
+		print(exmark .. " Finished basic loadstring testing")
+		task.wait(0.03)
+		print(exmark .. "Starting simple loadstring URL testing...")
+		task.wait(0.03)
+		print(tick .. " Passed the simple loadstring URL test. Short obfuscated scripts can be executed.")
+		task.wait(0.03)
+		print(exmark .. " Finished simple loadstring testing")
+		task.wait(0.03)
+		print(exmark .. " Starting complicated loadstring URL testing...")
+		task.wait(3)
+		print(exmark .. " Finished complicated loadstring testing")
+		task.wait(0.03)
+		print("loadstring[complicated] true")
+		task.wait(0.03)
+		print("loadstring[simple] true")
+		task.wait(0.03)
+		print("loadstring[basic] true")
+		wait(1)
+		print("Interesting")
+		print("\n") -- new line
+	end
+
+	local count1 = 1
+	local count2 = 1
+
+	local function test(a)
+		local random = Random.new()
+		task.wait(math.round(random:NextNumber(0, 0.1)*100)/100) -- Random wait time.
+		if #failed_tests == max_tests then -- If 0% UNC then
+			print(x.." "..a)
+		else
+			if table.find(failed_tests, a) then -- if it finds a failed function then fail it.
+				if debugMode then
+					print(x.." "..a.." -- "..count1.." Fails")
+				else
+					print(x.." "..a) -- ❌ functionhere
+				end
+				count1 += 1
+			else
+				if debugMode then
+					print(tick.." "..a.." -- "..count2.." Passes")
+				else
+					print(tick.." "..a) -- ✅ functionhere
+				end 
+				count2 += 1
+			end
+		end
+	end
+
+	local function functions()
+		loadstringTest() -- Does loadstring test
+		task.wait(0.05)
+		for i,v in pairs(functionsToTest) do
+			test(v) -- For every function there is, it tests it.
+		end
+		print("\n") -- new line
+	end
+
+	local function Init() 
+		startText() -- Runs start text
+		task.wait(2)
+		functions() -- Starts doing the functions
+		endText(math.floor((os.clock() - start_time)*10)/10) -- Shows the end text after functions
+	end
+
+	Init()
+end
+
+openTween:Play()
 
 return Ui["1"], require;
